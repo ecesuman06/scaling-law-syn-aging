@@ -1,0 +1,27 @@
+function [b,p,R,sync]=TL2(bold)
+% age=cell2mat(tm(:,3));
+% bold=tm(:,2);
+sub=size(bold,1);  % total number of subjects
+p=zeros(sub,1);
+b=zeros(sub,1);
+R=zeros(sub,1);
+sync=zeros(sub,1);
+for i  = 1:sub
+    s1 = [] ;
+    s1 = cell2mat(bold(i)) ;
+    s1(isnan(s1)) = 0 ;
+    s1 = detrend(s1) ;
+    %  s1 = s1-mean(s1);
+    s1(isnan(s1)) = 0 ;
+    m      = sqrt(mean(s1.^2,2))  ;
+    v      = var(s1,[],2) ;
+    a      = fitlm(log10(m),log10(v)) ;
+    ab1    = table2array(a.Coefficients);
+    b(i,1) = ab1(2,1);
+    p(i,1) = ab1(2,4);
+    R(i,1) = a.Rsquared.Ordinary;
+    FC     = corrcoef(s1);
+    FC     = FC.*~eye(size(FC));
+    FC(isnan(FC)) = 0;
+    sync(i,1) = mean(mean((FC)));
+end

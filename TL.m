@@ -1,0 +1,12 @@
+function [b_fit,p_val,r2,sync,b_analytical]=TL(bold)
+% % % bold : input data of size: time x location
+sub=size(bold,1);  % total number of subjects
+p_val=zeros(sub,1); r2=zeros(sub,1); b_fit=zeros(sub,1); b_analytical=zeros(sub,1); sync=zeros(sub,1); 
+
+for i=1:sub
+    s1 = [] ;
+    s1 = bold{i} ;
+    s1( :, 109 ) = [] ;
+    s1 = detrend( s1 ) ;
+     [b_fit(i),p_val(i),r2(i),sync(i),b_analytical(i)]=slop_sync(s1);
+end
